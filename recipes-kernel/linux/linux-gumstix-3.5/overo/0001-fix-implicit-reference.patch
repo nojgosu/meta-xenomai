@@ -1,0 +1,61 @@
+From 4f35bd203c086edd27196f18400b9c8acb7e50e4 Mon Sep 17 00:00:00 2001
+From: Jonathan Mitchell <jonathan.mitchell@gmail.com>
+Date: Sat, 13 Apr 2013 01:06:07 +1000
+Subject: [PATCH] Fix: Implicit reference in arch/arm/include/asm/pgtable.h
+
+---
+ arch/arm/include/asm/pgtable.h | 30 +++++++++++++++++-------------
+ 1 file changed, 17 insertions(+), 13 deletions(-)
+
+diff --git a/arch/arm/include/asm/pgtable.h b/arch/arm/include/asm/pgtable.h
+index 234847e..fd7dd96 100644
+--- a/arch/arm/include/asm/pgtable.h
++++ b/arch/arm/include/asm/pgtable.h
+@@ -209,6 +209,23 @@ extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
+ #define pmd_none(pmd)		(!pmd_val(pmd))
+ #define pmd_present(pmd)	(pmd_val(pmd))
+ 
++#define pte_none(pte)		(!pte_val(pte))
++#define pte_present(pte)	(pte_val(pte) & L_PTE_PRESENT)
++#define pte_write(pte)		(!(pte_val(pte) & L_PTE_RDONLY))
++#define pte_dirty(pte)		(pte_val(pte) & L_PTE_DIRTY)
++#define pte_young(pte)		(pte_val(pte) & L_PTE_YOUNG)
++#define pte_exec(pte)		(!(pte_val(pte) & L_PTE_XN))
++#define pte_special(pte)	(0)
++
++#define pte_present_user(pte) \
++	((pte_val(pte) & (L_PTE_PRESENT | L_PTE_USER)) == \
++	 (L_PTE_PRESENT | L_PTE_USER))
++
++#define PTE_BIT_FUNC(fn,op) \
++static inline pte_t pte_##fn(pte_t pte) { pte_val(pte) op; return pte; }
++
++
++
+ static inline pte_t *pmd_page_vaddr(pmd_t pmd)
+ {
+ 	return __va(pmd_val(pmd) & PHYS_MASK & (s32)PAGE_MASK);
+@@ -267,20 +284,7 @@ static inline void set_pte_at(struct mm_struct *mm, unsigned long addr,
+ 	set_pte_ext(ptep, pteval, ext);
+ }
+ 
+-#define pte_none(pte)		(!pte_val(pte))
+-#define pte_present(pte)	(pte_val(pte) & L_PTE_PRESENT)
+-#define pte_write(pte)		(!(pte_val(pte) & L_PTE_RDONLY))
+-#define pte_dirty(pte)		(pte_val(pte) & L_PTE_DIRTY)
+-#define pte_young(pte)		(pte_val(pte) & L_PTE_YOUNG)
+-#define pte_exec(pte)		(!(pte_val(pte) & L_PTE_XN))
+-#define pte_special(pte)	(0)
+ 
+-#define pte_present_user(pte) \
+-	((pte_val(pte) & (L_PTE_PRESENT | L_PTE_USER)) == \
+-	 (L_PTE_PRESENT | L_PTE_USER))
+-
+-#define PTE_BIT_FUNC(fn,op) \
+-static inline pte_t pte_##fn(pte_t pte) { pte_val(pte) op; return pte; }
+ 
+ PTE_BIT_FUNC(wrprotect, |= L_PTE_RDONLY);
+ PTE_BIT_FUNC(mkwrite,   &= ~L_PTE_RDONLY);
+-- 
+1.7.11.7
+

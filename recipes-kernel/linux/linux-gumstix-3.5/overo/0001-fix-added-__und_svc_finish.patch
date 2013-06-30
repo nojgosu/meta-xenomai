@@ -1,0 +1,55 @@
+From 5eac1cc12b443ad9f30b8f95f48f23fae7aae6b5 Mon Sep 17 00:00:00 2001
+From: Jonathan Mitchell <jonathan.mitchell@gmail.com>
+Date: Sat, 13 Apr 2013 14:11:01 +1000
+Subject: [PATCH] Fix: added __und_svc_finish label
+
+---
+ arch/arm/kernel/entry-armv.S | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/kernel/entry-armv.S b/arch/arm/kernel/entry-armv.S
+index 0d1851c..ae1eda1 100644
+--- a/arch/arm/kernel/entry-armv.S
++++ b/arch/arm/kernel/entry-armv.S
+@@ -244,6 +244,19 @@ svc_preempt:
+ 	b	1b
+ #endif
+ 
++__und_fault:
++	@ Correct the PC such that it is pointing at the instruction
++	@ which caused the fault.  If the faulting instruction was ARM
++	@ the PC will be pointing at the next instruction, and have to
++	@ subtract 4.  Otherwise, it is Thumb, and the PC will be
++	@ pointing at the second half of the Thumb instruction.  We
++	@ have to subtract 2.
++	ldr	r2, [r0, #S_PC]
++	sub	r2, r2, r1
++	str	r2, [r0, #S_PC]
++	b	do_undefinstr
++ENDPROC(__und_fault)
++
+ 	.align	5
+ __und_svc:
+ #ifdef CONFIG_KPROBES
+@@ -269,7 +282,7 @@ __und_svc:
+ 	ldrhhs	r9, [r4]			@ bottom 16 bits
+ 	orrhs	r0, r9, r0, lsl #16
+ #endif
+-	adr	r9, BSYM(1f)
++	adr	r9, BSYM(__und_svc_finish)
+ 	mov	r2, r4
+ 	bl	call_fpe
+ 
+@@ -279,7 +292,8 @@ __und_svc:
+ 	@
+ 	@ IRQs off again before pulling preserved data off the stack
+ 	@
+-1:	disable_irq_notrace
++__und_svc_finish:
++	disable_irq_notrace
+ 
+ 	@
+ 	@ restore SPSR and restart the instruction
+-- 
+1.7.11.7
+

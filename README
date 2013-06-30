@@ -1,0 +1,10 @@
+Yocto layer for Gumstix Xenomai Real-time support. 
+
+This layer depends on:
+
+meta-gumstix
+URI: git://git.yoctoproject.org/poky.git
+branch: danny
+revision: HEAD
+
+Layer maintainer: Jonathan Mitchell
