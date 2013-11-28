@@ -1,8 +1,9 @@
-Yocto layer for Gumstix Xenomai Real-time support. 
+Yocto layer for Xenomai Real-time support for various SoCs. 
 
-This layer depends on:
+This layer supports on:
 
 meta-gumstix
+meta-raspberrypi
 URI: git://git.yoctoproject.org/poky.git
 branch: danny
 revision: HEAD
