@@ -1,0 +1,23 @@
+# Example bblayer configuration for Raspberry Pi
+# This supresses other board support recipes
+#
+# LAYER_CONF_VERSION is increased each time build/conf/bblayers.conf
+# changes incompatibly
+LCONF_VERSION = "6"
+
+BBPATH = "${TOPDIR}"
+BBFILES ?= ""
+
+BBLAYERS ?= " \
+  /<path_to_poky>/poky/meta \
+  /<path_to_poky>/poky/meta-yocto \
+  /<path_to_poky>/poky/meta-yocto-bsp \
+  /<path_to_poky>/poky/meta-raspberrypi \
+  /<path_to_poky>/poky/meta-xenomai \
+  "
+BBLAYERS_NON_REMOVABLE ?= " \
+  /<path_to_poky>/poky/meta \
+  /<path_to_poky>/poky/meta-yocto \
+  "
+
+BBMASK = "/<path_to_poky>/poky/meta-xenomai/recipes-kernel/linux/linux-gumstix_3.5.bbappend"
