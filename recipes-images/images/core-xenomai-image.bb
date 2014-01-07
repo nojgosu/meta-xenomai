@@ -1,6 +1,6 @@
 DESCRIPTION = "Image with Xenoamai, a real-time OS"
 
-PREFERRED_VERSION_linux-raspberrypi = "3.8.13"
+PREFERRED_VERSION_linux-raspberrypi = "3.8.13+git%"
 
 IMAGE_FEATURES += "splash package-management ssh-server-openssh tools-sdk \
                      ${CORE_IMAGE_BASE_INSTALL}"
