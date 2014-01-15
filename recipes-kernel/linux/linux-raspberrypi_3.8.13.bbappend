@@ -20,7 +20,23 @@ do_prepare_kernel () {
     #4. execute prepare_kernel.sh --linux=<linux> --arch=arm
     echo "Hello, world!"
 
+    #set linux kernel source directory
+    linux_src="${S}"
+    echo $linux_src > ~/test.tmp
+
+    #set xenomai source directory 
+    xenomai_src="${TMPDIR}/work/${MACHINE}-poky-${TARGET_OS}/${PN}/${EXTENDPE}${PV}-${PR}/xenomai-2.6.3/"
+    echo $xenomai_src > ~/test2.tmp
+
+    #switch pwd to xenomai source root
+    pushd $xenomai_src
+    #xenomai root working directory
+    ls > ~/test3.tmp
+
+    #switch pwd back to bitbake default
+    popd
+
 }
 
-addtask prepare_kernel after do_populate_sysroot before do_patch
+addtask prepare_kernel after do_unpack before do_patch
 
