@@ -1,5 +1,5 @@
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/{PN}"
+FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}"
 
 #xenomai source (prepare_kernel.sh script)
 SRC_URI += "http://download.gna.org/xenomai/stable/xenomai-2.6.3.tar.bz2"
@@ -10,7 +10,7 @@ SRC_URI +=  "file://ipipe-core-3.8.13-arm-3.patch;md5=99f1bd34259199fb410d2052eb
 SRC_URI +=  "file://ipipe-core-3.8.13-raspberry-post-2.patch;md5=2355877c2844f65a901f90ddc233aa3f"
 
 #kernel defconfig
-#SRC_URI +=  "file://defconfig"
+SRC_URI +=  "file://defconfig"
 
 
 do_prepare_kernel () {
@@ -22,8 +22,6 @@ do_prepare_kernel () {
     #3. apply ipipe-core-3.8.13-raspberry-post-2.patch
     #4. execute prepare_kernel.sh --linux=<linux> --arch=arm
 
-
-
     #set linux kernel source directory
     linux_src="${S}"
     echo $linux_src > ~/test.tmp
@@ -31,17 +29,6 @@ do_prepare_kernel () {
     #set xenomai source directory 
     xenomai_src="${TMPDIR}/work/${MACHINE}-poky-${TARGET_OS}/${PN}/${EXTENDPE}${PV}-${PR}/xenomai-2.6.3/"
     echo $xenomai_src > ~/test2.tmp
-
-    #currently in kernel source root directory
-    #apply raspberrypi xenomai pre patch to linux source
-    git apply $xenomai_src/ksrc/arch/arm/patches/raspberry/ipipe-core-3.8.13-raspberry-pre-2.patch
-
-    #apply xenomai adeos ipipe core to linux source
-    git apply $xenomai_src/ksrc/arch/arm/patches/ipipe-core-3.8.13-arm-3.patch
-
-    #apply raspberrypi xenomai post patch to linux source
-    git apply $xenomai_src/ksrc/arch/arm/patches/raspberry/ipipe-core-3.8.13-raspberry-post-2.patch
-
 
     #prepare kernel
     $xenomai_src/scripts/prepare-kernel.sh --arch=arm --linux=$linux_src
@@ -61,5 +48,5 @@ do_prepare_kernel () {
 
 }
 
-addtask prepare_kernel after do_unpack before do_patch
+addtask prepare_kernel after do_patch before do_configure
 
