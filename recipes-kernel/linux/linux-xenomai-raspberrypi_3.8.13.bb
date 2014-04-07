@@ -1,5 +1,10 @@
+require linux-raspberrypi.inc
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}"
+
+#download linux src tree
+SRCREV = "d996a1b91b2bf3dc06f4f4f822a56f4496457aa1"
+SRC_URI += "git://github.com/raspberrypi/linux.git;protocol=git;branch=rpi-3.8.y"
 
 #xenomai source (prepare_kernel.sh script)
 SRC_URI += "http://download.gna.org/xenomai/stable/xenomai-2.6.3.tar.bz2"

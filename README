@@ -1,9 +1,11 @@
 Yocto layer for Xenomai Real-time support for various SoCs. 
 
-This layer supports on:
+This layer implements xenomai on the following SoCs:
 
-meta-gumstix
-meta-raspberrypi
+raspberrypi
+
+Layer depends on:
+Poky
 URI: git://git.yoctoproject.org/poky.git
 branch: dylan
 revision: HEAD
